@@ -9,7 +9,16 @@ let
   # Import the library
   lib = import ../../lib {};
   
-  # Create a minimal stdenv without nixpkgs
+  # Create a proper writeShellScriptBin using builtins.derivation
+  writeShellScriptBin = name: script:
+    builtins.derivation {
+      inherit name system;
+      builder = "/bin/sh";
+      args = [ "-c" "echo '#!/bin/sh' > \$out && echo '${script}' >> \$out" ];
+      outputs = [ "out" ];
+    };
+  
+  # Minimal stdenv (we don't actually need it for hellonixos)
   stdenv = {
     mkDerivation = { name, version, src, buildInputs ? [], nativeBuildInputs ? [], installPhase ? "", ... } @ args:
       let
@@ -19,16 +28,11 @@ let
       {
         inherit name version src buildInputs nativeBuildInputs installPhase outPath;
         type = "derivation";
-        drvPath = "/nix/store/${builtins.hashString "sha256" (drvName + "drv")}-${drvName}.drv";
-        outputs = [ "out" ];
-        outputName = "out";
-        outputSpecified = true;
-        all = [ outPath ];
         __toString = self: "${drvName}";
       };
   };
   
-  # Minimal fetchurl implementation
+  # Minimal fetchurl implementation (we don't need this for hellonixos)
   fetchurl = { url, sha256, ... }: {
     outPath = "/nix/store/${builtins.hashString "sha256" (url + sha256)}-source";
     type = "derivation";
@@ -48,14 +52,6 @@ let
   
   # Minimal maintainers
   maintainers = {};
-  
-  # Minimal writeShellScriptBin
-  writeShellScriptBin = name: script: {
-    name = name;
-    script = script;
-    outPath = "/nix/store/${builtins.hashString "sha256" (name + script)}-${name}";
-    type = "derivation";
-  };
 
   # Call package function (only pass expected args)
   callPackage = fn: args: import fn (args // {
