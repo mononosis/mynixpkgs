@@ -16,6 +16,7 @@ let
       builder = "/bin/sh";
       args = [ "-c" "echo '#!/bin/sh' > \$out && echo '${script}' >> \$out" ];
       outputs = [ "out" ];
+      # The script is now at $out, which will be symlinked to bin/${name}
     };
   
   # Minimal stdenv (we don't actually need it for hellonixos)
