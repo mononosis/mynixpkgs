@@ -1,5 +1,4 @@
 { system ? builtins.currentSystem
-, nixpkgs ? null
 , config ? {}
 , overlays ? []
 , crossOverlays ? []
@@ -10,10 +9,8 @@ let
   # Import the library
   lib = import ../../lib {};
   
-  # Use the real stdenv from the flake's nixpkgs input or <nixpkgs> if null
-  realNixpkgs = if nixpkgs != null 
-    then nixpkgs.legacyPackages.${system}
-    else import <nixpkgs> { inherit system; };
+  # Use the real stdenv from <nixpkgs> directly
+  realNixpkgs = import <nixpkgs> { inherit system; };
   stdenv = realNixpkgs.stdenv;
   fetchurl = realNixpkgs.fetchurl;
   licenses = realNixpkgs.lib.licenses;

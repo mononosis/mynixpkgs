@@ -1,5 +1,4 @@
 { system ? builtins.currentSystem
-, nixpkgs ? null
 , config ? {}
 , overlays ? []
 , crossOverlays ? []
@@ -7,5 +6,5 @@
 }:
 
 import ./impure.nix {
-  inherit system nixpkgs config overlays crossOverlays crossSystem;
+  inherit system config overlays crossOverlays crossSystem;
 } 

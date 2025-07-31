@@ -1,5 +1,4 @@
 { system ? builtins.currentSystem
-, nixpkgs ? null
 , config ? {}
 , overlays ? []
 , crossOverlays ? []
@@ -26,8 +25,7 @@ if ! builtins ? nixVersion || builtins.compareVersions requiredVersion builtins.
           curl -L https://nixos.org/nix/install | sh
 
     For more information, please see the NixOS release notes at
-    https://nixos.org/nixos/manual or locally at
-    ${toString ./nixos/doc/manual/release-notes}.
+    https://nixos.org/nixos/manual/release-notes.
 
     If you need further help, see https://nixos.org/nixos/support.html
   ''
@@ -36,5 +34,5 @@ else
 
   # Import the package set with proper arguments
   import ./pkgs/top-level/impure.nix {
-    inherit system nixpkgs config overlays crossOverlays crossSystem;
+    inherit system config overlays crossOverlays crossSystem;
   } 
