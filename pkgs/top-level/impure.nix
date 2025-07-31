@@ -10,8 +10,10 @@ let
   # Import the library
   lib = import ../../lib {};
   
-  # Use the real stdenv from the flake's nixpkgs input
-  realNixpkgs = nixpkgs.legacyPackages.${system};
+  # Use the real stdenv from the flake's nixpkgs input or <nixpkgs> if null
+  realNixpkgs = if nixpkgs != null 
+    then nixpkgs.legacyPackages.${system}
+    else import <nixpkgs> { inherit system; };
   stdenv = realNixpkgs.stdenv;
   fetchurl = realNixpkgs.fetchurl;
   licenses = realNixpkgs.lib.licenses;

@@ -1,3 +1,11 @@
+{ system ? builtins.currentSystem
+, nixpkgs ? null
+, config ? {}
+, overlays ? []
+, crossOverlays ? []
+, crossSystem ? null
+}:
+
 let requiredVersion = import ./lib/minver.nix; in
 
 if ! builtins ? nixVersion || builtins.compareVersions requiredVersion builtins.nixVersion == 1
@@ -26,4 +34,7 @@ if ! builtins ? nixVersion || builtins.compareVersions requiredVersion builtins.
 
 else
 
-  import ./pkgs/top-level/impure.nix 
+  # Import the package set with proper arguments
+  import ./pkgs/top-level/impure.nix {
+    inherit system nixpkgs config overlays crossOverlays crossSystem;
+  } 
