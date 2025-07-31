@@ -3,6 +3,7 @@
 , overlays ? []
 , crossOverlays ? []
 , crossSystem ? null
+, nixpkgs
 }:
 
 let requiredVersion = import ./lib/minver.nix; in
@@ -34,5 +35,5 @@ else
 
   # Import the package set with proper arguments
   import ./pkgs/top-level/impure.nix {
-    inherit system config overlays crossOverlays crossSystem;
+    inherit system config overlays crossOverlays crossSystem nixpkgs;
   } 
