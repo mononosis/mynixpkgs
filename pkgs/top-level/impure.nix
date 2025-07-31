@@ -34,3 +34,4 @@ let
     inherit hellonixos;
   };
   
+in allPackages
