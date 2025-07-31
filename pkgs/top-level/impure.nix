@@ -3,35 +3,19 @@
 , overlays ? []
 , crossOverlays ? []
 , crossSystem ? null
+, nixpkgs
 }:
 
 let
   # Import the library
   lib = import ../../lib {};
   
-  # Create a proper writeShellScriptBin using builtins.derivation
-  writeShellScriptBin = name: script:
-    builtins.derivation {
-      inherit name system;
-      builder = "/bin/sh";
-      args = [ "-c" "echo '#!/bin/sh' > \$out && echo '${script}' >> \$out" ];
-      outputs = [ "out" ];
-      # The script is now at $out, which will be symlinked to bin/${name}
-    };
+  # Import nixpkgs to get stdenv and writeShellScriptBin
+  pkgs = import nixpkgs { inherit system; };
   
-  # Minimal stdenv (we don't actually need it for hellonixos)
-  stdenv = {
-    mkDerivation = { name, version, src, buildInputs ? [], nativeBuildInputs ? [], installPhase ? "", ... } @ args:
-      let
-        drvName = "${name}-${version}";
-        outPath = "/nix/store/${builtins.hashString "sha256" (drvName + toString src)}-${drvName}";
-      in
-      {
-        inherit name version src buildInputs nativeBuildInputs installPhase outPath;
-        type = "derivation";
-        __toString = self: "${drvName}";
-      };
-  };
+  # Use nixpkgs' stdenv and writeShellScriptBin
+  stdenv = pkgs.stdenv;
+  writeShellScriptBin = pkgs.writeShellScriptBin;
   
   # Minimal fetchurl implementation (we don't need this for hellonixos)
   fetchurl = { url, sha256, ... }: {
